@@ -18,29 +18,35 @@
     preload="auto"
   ></video>
 
+  <div id="veil" aria-hidden="true"></div>
+
   <script>
     const video = document.getElementById("bg-video");
+    const veil = document.getElementById("veil");
     let soundOn = false;
-    let videoReady = false;
+    let chainStarted = false;
 
     function applySound() {
+      if (soundOn) return;
+      soundOn = true;
       video.muted = false;
       video.volume = 1;
     }
 
-    video.addEventListener("playing", () => {
-      videoReady = true;
-      if (soundOn) applySound();
-    }, { once: true });
-
-    function requestSound() {
-      if (soundOn) return;
-      soundOn = true;
-      if (videoReady) applySound();
+    function startChain() {
+      if (chainStarted) return;
+      chainStarted = true;
+      document.body.classList.add("engaged");
     }
 
-    // Chrome freezes if sound is enabled on mouse move — click/tap only.
-    document.addEventListener("pointerdown", requestSound, { once: true, passive: true });
+    // Step 1: mouse move (or tap) switches background layer off.
+    window.addEventListener("pointermove", startChain, { once: true, passive: true });
+    window.addEventListener("pointerdown", startChain, { once: true, passive: true });
+
+    // Step 2: after background transition ends, turn sound on.
+    veil.addEventListener("transitionend", (event) => {
+      if (event.propertyName === "opacity") applySound();
+    }, { once: true });
   </script>
 </body>
 </html>
