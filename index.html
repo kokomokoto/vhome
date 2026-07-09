@@ -13,23 +13,44 @@
     src="https://pub-2283767efb1f4ff69d1896f9c6b1bd2e.r2.dev/kepulia%20dancing.mp4"
     autoplay
     loop
+    muted
     playsinline
     preload="auto"
   ></video>
 
   <script>
     const video = document.getElementById("bg-video");
+    let soundOn = false;
 
-    video.muted = false;
-    video.volume = 1;
-    video.play().catch(() => {
-      video.muted = true;
-      video.play();
+    function enableSound() {
+      if (soundOn) return;
+      soundOn = true;
+      video.muted = false;
+      video.volume = 1;
+      video.play().catch(() => {});
+    }
+
+    // Try sound immediately (works if browser already trusts this site).
+    (async () => {
+      try {
+        video.muted = false;
+        video.volume = 1;
+        await video.play();
+        soundOn = true;
+      } catch (e) {
+        video.muted = true;
+        video.play().catch(() => {});
+      }
+    })();
+
+    // First mouse move, click, touch, or key turns sound on.
+    ["pointermove", "mousemove", "pointerdown", "click", "touchstart", "keydown"].forEach((evt) => {
+      window.addEventListener(evt, enableSound, { once: true, passive: true });
     });
 
     video.addEventListener("ended", () => {
       video.currentTime = 0;
-      video.play();
+      video.play().catch(() => {});
     });
   </script>
 </body>
