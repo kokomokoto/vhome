@@ -3,92 +3,71 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VHome — მთავარი</title>
-  <meta name="description" content="VHome — თანამედროვე სტატიკური საიტი, განთავსებული Cloudflare Pages-ზე." />
+  <title>VHome</title>
+  <meta name="description" content="VHome" />
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <header class="site-header">
-    <nav class="nav container">
-      <a class="brand" href="/">
-        <span class="brand-mark">V</span>
-        <span class="brand-name">VHome</span>
-      </a>
-      <ul class="nav-links">
-        <li><a href="#about">ჩვენ შესახებ</a></li>
-        <li><a href="#features">სერვისები</a></li>
-        <li><a href="#contact">კონტაქტი</a></li>
-      </ul>
-    </nav>
-  </header>
+  <video
+    id="bg-video"
+    src="https://pub-2283767efb1f4ff69d1896f9c6b1bd2e.r2.dev/kepulia%20dancing.mp4"
+    autoplay
+    loop
+    playsinline
+    preload="auto"
+  ></video>
 
-  <main>
-    <section class="hero">
-      <div class="container hero-inner">
-        <p class="eyebrow">კეთილი იყოს თქვენი მობრძანება</p>
-        <h1>VHome</h1>
-        <p class="lead">
-          თანამედროვე და სწრაფი ვებსაიტი, განთავსებული Cloudflare-ის გლობალურ ქსელზე.
-          უსაფრთხო, საიმედო და ყოველთვის ხელმისაწვდომი.
-        </p>
-        <div class="cta-row">
-          <a class="btn btn-primary" href="#contact">დაგვიკავშირდით</a>
-          <a class="btn btn-ghost" href="#features">გაიგე მეტი</a>
-        </div>
-      </div>
-    </section>
-
-    <section id="features" class="features">
-      <div class="container">
-        <h2 class="section-title">რატომ VHome</h2>
-        <div class="cards">
-          <article class="card">
-            <div class="card-icon">⚡</div>
-            <h3>სწრაფი</h3>
-            <p>განთავსებულია Cloudflare-ის CDN-ზე — გვერდები იტვირთება მყისიერად მთელ მსოფლიოში.</p>
-          </article>
-          <article class="card">
-            <div class="card-icon">🔒</div>
-            <h3>უსაფრთხო</h3>
-            <p>უფასო SSL სერტიფიკატი და დაცვა DDoS შეტევებისგან, ავტომატურად ჩართული.</p>
-          </article>
-          <article class="card">
-            <div class="card-icon">🚀</div>
-            <h3>ავტომატური</h3>
-            <p>GitHub-ზე ყოველი push-ის შემდეგ საიტი ავტომატურად ახლდება.</p>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section id="about" class="about">
-      <div class="container about-inner">
-        <h2 class="section-title">ჩვენ შესახებ</h2>
-        <p>
-          ეს არის საწყისი შაბლონი შენი საიტისთვის. ჩაანაცვლე ტექსტი, ფერები და სურათები
-          შენი პროექტის მიხედვით — ცვლილებები GitHub-ზე ატვირთვისთანავე გამოჩნდება ცოცხალ საიტზე.
-        </p>
-      </div>
-    </section>
-
-    <section id="contact" class="contact">
-      <div class="container contact-inner">
-        <h2 class="section-title">კონტაქტი</h2>
-        <p>დაგვიკავშირდით ელფოსტით:</p>
-        <a class="email" href="mailto:info@vhome.ge">info@vhome.ge</a>
-      </div>
-    </section>
-  </main>
-
-  <footer class="site-footer">
-    <div class="container">
-      <p>&copy; <span id="year"></span> VHome. ყველა უფლება დაცულია.</p>
-    </div>
-  </footer>
+  <button id="unmute-btn" type="button" hidden>
+    <span class="unmute-icon" aria-hidden="true">🔊</span>
+    ხმის ჩართვა
+  </button>
 
   <script>
-    document.getElementById("year").textContent = new Date().getFullYear();
+    const video = document.getElementById("bg-video");
+    const unmuteBtn = document.getElementById("unmute-btn");
+
+    async function tryPlayWithSound() {
+      video.muted = false;
+      video.volume = 1;
+      try {
+        await video.play();
+        unmuteBtn.hidden = true;
+      } catch (err) {
+        // Browser blocked sound autoplay — start muted, offer manual unmute.
+        video.muted = true;
+        try { await video.play(); } catch (e) {}
+        unmuteBtn.hidden = false;
+      }
+    }
+
+    function enableSound() {
+      video.muted = false;
+      video.volume = 1;
+      video.play();
+      unmuteBtn.hidden = true;
+    }
+
+    unmuteBtn.addEventListener("click", enableSound);
+
+    // First interaction anywhere also unmutes.
+    ["click", "keydown", "touchstart"].forEach((evt) => {
+      document.addEventListener(
+        evt,
+        () => {
+          if (video.muted) enableSound();
+        },
+        { once: true }
+      );
+    });
+
+    // Safety net: keep looping even if 'loop' attribute is ignored.
+    video.addEventListener("ended", () => {
+      video.currentTime = 0;
+      video.play();
+    });
+
+    tryPlayWithSound();
   </script>
 </body>
 </html>
