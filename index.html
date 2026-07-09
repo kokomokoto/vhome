@@ -11,6 +11,7 @@
   <video
     id="bg-video"
     src="https://pub-2283767efb1f4ff69d1896f9c6b1bd2e.r2.dev/kepulia%20dancing.mp4"
+    autoplay
     loop
     muted
     playsinline
@@ -20,25 +21,26 @@
   <script>
     const video = document.getElementById("bg-video");
     let soundOn = false;
-    let playing = false;
+    let videoReady = false;
 
-    function startVideo() {
-      if (playing) return;
-      playing = true;
-      video.muted = true;
-      video.play().catch(() => {});
-    }
-
-    function enableSound() {
-      if (soundOn) return;
-      soundOn = true;
+    function applySound() {
       video.muted = false;
       video.volume = 1;
     }
 
-    video.addEventListener("canplay", startVideo, { once: true });
+    video.addEventListener("playing", () => {
+      videoReady = true;
+      if (soundOn) applySound();
+    }, { once: true });
 
-    window.addEventListener("pointermove", enableSound, { once: true, passive: true });
+    function requestSound() {
+      if (soundOn) return;
+      soundOn = true;
+      if (videoReady) applySound();
+    }
+
+    // Chrome freezes if sound is enabled on mouse move — click/tap only.
+    document.addEventListener("pointerdown", requestSound, { once: true, passive: true });
   </script>
 </body>
 </html>

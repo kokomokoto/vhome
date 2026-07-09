@@ -10,6 +10,7 @@ body {
   height: 100%;
   background: #000;
   overflow: hidden;
+  cursor: pointer;
 }
 
 #bg-video {
