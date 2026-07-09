@@ -4,49 +4,15 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>VHome</title>
-  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <video
-    id="bg-video"
     src="https://pub-2283767efb1f4ff69d1896f9c6b1bd2e.r2.dev/kepulia%20dancing.mp4"
     autoplay
     loop
-    muted
     playsinline
     preload="auto"
   ></video>
-
-  <div id="veil" aria-hidden="true"></div>
-
-  <script>
-    const video = document.getElementById("bg-video");
-    const veil = document.getElementById("veil");
-    let soundOn = false;
-    let chainStarted = false;
-
-    function applySound() {
-      if (soundOn) return;
-      soundOn = true;
-      video.muted = false;
-      video.volume = 1;
-    }
-
-    function startChain() {
-      if (chainStarted) return;
-      chainStarted = true;
-      document.body.classList.add("engaged");
-    }
-
-    // Step 1: mouse move (or tap) switches background layer off.
-    window.addEventListener("pointermove", startChain, { once: true, passive: true });
-    window.addEventListener("pointerdown", startChain, { once: true, passive: true });
-
-    // Step 2: after background transition ends, turn sound on.
-    veil.addEventListener("transitionend", (event) => {
-      if (event.propertyName === "opacity") applySound();
-    }, { once: true });
-  </script>
 </body>
 </html>
