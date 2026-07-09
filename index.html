@@ -11,8 +11,15 @@
     src="https://pub-2283767efb1f4ff69d1896f9c6b1bd2e.r2.dev/kepulia%20dancing.mp4"
     autoplay
     loop
+    muted
     playsinline
     preload="auto"
   ></video>
+
+  <script>
+    document.addEventListener("click", () => {
+      document.querySelector("video").muted = false;
+    }, { once: true });
+  </script>
 </body>
 </html>
