@@ -2,23 +2,45 @@
 <html lang="ka">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>VHome</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <video
-    src="https://pub-2283767efb1f4ff69d1896f9c6b1bd2e.r2.dev/kepulia%20dancing.mp4"
-    autoplay
-    loop
-    muted
-    playsinline
-    preload="auto"
-  ></video>
+  <div class="video-stage">
+    <video
+      id="bg-video"
+      src="https://pub-2283767efb1f4ff69d1896f9c6b1bd2e.r2.dev/kepulia%20dancing.mp4"
+      autoplay
+      loop
+      muted
+      playsinline
+      preload="auto"
+      disablepictureinpicture
+    ></video>
+  </div>
 
   <script>
+    const video = document.getElementById("bg-video");
+
+    function fitVideo() {
+      if (!video.videoWidth) return;
+
+      const screenRatio = window.innerWidth / window.innerHeight;
+      const videoRatio = video.videoWidth / video.videoHeight;
+
+      // Auto-fit: cover fills the screen on every aspect ratio.
+      // Switch to contain only when ratios are almost the same (no useful crop).
+      video.style.objectFit =
+        Math.abs(screenRatio - videoRatio) < 0.05 ? "contain" : "cover";
+    }
+
+    video.addEventListener("loadedmetadata", fitVideo);
+    window.addEventListener("resize", fitVideo);
+    window.addEventListener("orientationchange", fitVideo);
+
     document.addEventListener("click", () => {
-      document.querySelector("video").muted = false;
+      video.muted = false;
     }, { once: true });
   </script>
 </body>
