@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>VHome</title>
-  <meta name="description" content="VHome" />
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="styles.css" />
 </head>
@@ -18,56 +17,20 @@
     preload="auto"
   ></video>
 
-  <button id="unmute-btn" type="button" hidden>
-    <span class="unmute-icon" aria-hidden="true">🔊</span>
-    ხმის ჩართვა
-  </button>
-
   <script>
     const video = document.getElementById("bg-video");
-    const unmuteBtn = document.getElementById("unmute-btn");
 
-    async function tryPlayWithSound() {
-      video.muted = false;
-      video.volume = 1;
-      try {
-        await video.play();
-        unmuteBtn.hidden = true;
-      } catch (err) {
-        // Browser blocked sound autoplay — start muted, offer manual unmute.
-        video.muted = true;
-        try { await video.play(); } catch (e) {}
-        unmuteBtn.hidden = false;
-      }
-    }
-
-    function enableSound() {
-      video.muted = false;
-      video.volume = 1;
+    video.muted = false;
+    video.volume = 1;
+    video.play().catch(() => {
+      video.muted = true;
       video.play();
-      unmuteBtn.hidden = true;
-    }
-
-    unmuteBtn.addEventListener("click", enableSound);
-
-    // First interaction anywhere also unmutes.
-    ["click", "keydown", "touchstart"].forEach((evt) => {
-      document.addEventListener(
-        evt,
-        () => {
-          if (video.muted) enableSound();
-        },
-        { once: true }
-      );
     });
 
-    // Safety net: keep looping even if 'loop' attribute is ignored.
     video.addEventListener("ended", () => {
       video.currentTime = 0;
       video.play();
     });
-
-    tryPlayWithSound();
   </script>
 </body>
 </html>
