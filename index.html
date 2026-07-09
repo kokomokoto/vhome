@@ -15,6 +15,7 @@
     loop
     muted
     playsinline
+    webkit-playsinline
     preload="auto"
   ></video>
 
@@ -27,30 +28,11 @@
       soundOn = true;
       video.muted = false;
       video.volume = 1;
-      video.play().catch(() => {});
+      // Do not call play() again — Chrome freezes when play() is re-triggered mid-playback.
     }
 
-    // Try sound immediately (works if browser already trusts this site).
-    (async () => {
-      try {
-        video.muted = false;
-        video.volume = 1;
-        await video.play();
-        soundOn = true;
-      } catch (e) {
-        video.muted = true;
-        video.play().catch(() => {});
-      }
-    })();
-
-    // First mouse move, click, touch, or key turns sound on.
     ["pointermove", "mousemove", "pointerdown", "click", "touchstart", "keydown"].forEach((evt) => {
       window.addEventListener(evt, enableSound, { once: true, passive: true });
-    });
-
-    video.addEventListener("ended", () => {
-      video.currentTime = 0;
-      video.play().catch(() => {});
     });
   </script>
 </body>
